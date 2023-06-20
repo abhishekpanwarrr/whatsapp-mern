@@ -10,7 +10,7 @@ import {
   import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import Cookies from "js-cookie"
 const Login = () => {
   const toast = useToast()
   const navigate = useNavigate()
@@ -36,6 +36,7 @@ const Login = () => {
         }
         const {data} = await axios.post("http://localhost:4000/api/user/login",{email,password},config)
         localStorage.setItem("userInfo",JSON.stringify(data))
+        Cookies.set('token', data.token, { path: '/' })
         toast({
           title:"Logged in successfully",
           status:"success",

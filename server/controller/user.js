@@ -40,7 +40,7 @@ const login = async (req, res) => {
             _id: newUser._id,
             name: newUser.name,
             email: newUser.email,
-            pic: newUser.pic,
+            pic: newUser.picture,
             token: generateToken(newUser._id),
           });
 
