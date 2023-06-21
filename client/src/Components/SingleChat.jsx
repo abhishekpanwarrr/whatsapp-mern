@@ -3,6 +3,7 @@ import { ChatState } from "../context/ChatContext"
 import {ArrowBackIcon} from "@chakra-ui/icons"
 import { getSender, getSenderFull } from "../config/ChatLogic"
 import ProfileModal from "./misclenaous/ProfileModal"
+import UpdateGroupChat from "./misclenaous/UpdateGroupChat"
 
 // eslint-disable-next-line react/prop-types
 const SingleChat = ({fetchAgain,setFetchAgain}) => {
@@ -31,6 +32,7 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
              </>: (
               <>
                 {selectedChat?.chatName?.toUpperCase()}
+                {<UpdateGroupChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />}
               </>
              )}
           </Text>
