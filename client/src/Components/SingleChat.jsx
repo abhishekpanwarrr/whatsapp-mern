@@ -7,13 +7,20 @@ import UpdateGroupChat from "./misclenaous/UpdateGroupChat";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
+import './style.css'
+import ScrollableChat from "./ScrollableChat";
+import io from "socket.io-client"
 
 // eslint-disable-next-line react/prop-types
+const ENDPOINT = "http://localhost:4000/"
+let socket,selectedChatCompare ;
+
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { user, selectedChat, setSelectedChat } = ChatState();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [newMessage, setNewMessage] = useState();
+  const [newMessage, setNewMessage] = useState("");
+  const [socketConnected, setSocketConnected] = useState(false)
   const toast = useToast();
 
   const fetchMessages = async() =>{
@@ -76,6 +83,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   }
 
   useEffect(() => {fetchMessages()},[selectedChat])
+  useEffect(() =>{
+    socket = io(ENDPOINT)
+    socket.emit("setup",user)
+    socket.on("connection",() => setSocketConnected(true))
+  },[])
   return (
     <>
       {selectedChat ? (
@@ -106,6 +118,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   <UpdateGroupChat
                     fetchAgain={fetchAgain}
                     setFetchAgain={setFetchAgain}
+                    fetchMessages={fetchMessages}
                   />
                 }
               </>
@@ -122,8 +135,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             overflowY="hidden"
           > 
             {loading ? <Spinner size={"xl"} w={20} h={20} alignSelf="center" margin="auto" /> :(
-              <div>
-                  {messages.length > 0 ? <></> : "No messages"}
+              <div className="messages">
+                  <ScrollableChat messages={messages} />
               </div>
             )}
             <FormControl onKeyDown={sendMessage} mt={3} isRequired>
