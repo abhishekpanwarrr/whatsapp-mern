@@ -52,15 +52,12 @@ const fetchChats = asyncHandler(async (req, res) => {
       .populate("groupAdmin", "-password")
       .populate("latestMessage")
       .sort({ updatedAt: -1 });
-    console.log("🚀 ~ file: chat.js:55 ~ fetchChats ~ chats:", chats)
     const results = await User.populate(chats, {
       path: "latestMessage.sender",
       select: "name pic email",
     });
-    console.log("🚀 ~ file: chat.js:59 ~ fetchChats ~ results:", results)
     res.status(200).json(results);
   } catch (error) {
-    console.log("🚀 ~ file: chat.js:63 ~ fetchChats ~ error:", error)
     res.status(500).json({ message: error.message });
   }
 });

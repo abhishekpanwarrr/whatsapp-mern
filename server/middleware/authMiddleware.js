@@ -22,7 +22,6 @@ const protect = asyncHandler(async(req,res,next) =>{
     if (!token) {
         return res.status(401).json({message:"You are not authorized."})
       }
-      console.log("🚀 ~ file: authMiddleware.js:26 ~ protect ~ token:", token)
 })
 
 
