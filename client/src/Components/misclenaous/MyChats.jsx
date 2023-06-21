@@ -7,38 +7,45 @@ import { AddIcon } from "@chakra-ui/icons";
 import GroupChatModal from "./GroupChatModal";
 import ChatLoading from "./ChatLoading";
 import { getSender } from "../../config/ChatLogic";
+import { useNavigate } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
 const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
   const { selectedChat, setSelectedChat, chats, setChats } = ChatState();
   const toast = useToast();
+  const navigate = useNavigate()
 
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     const fetchChats = async () => {
       const config = {
         headers: {
+          "Content-type": "application/json",
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
       };
 
       try {
-        const { data } = await axios.get(
+        const {data}  = await axios.get(
           "http://localhost:4000/api/chat",
           config
         );
-
+        
         setChats(data);
       } catch (error) {
-        toast({
-          title: error.message,
-          description: "Failed to Load the chats",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom-left",
-        });
+        if(error.response.status === 401){
+          localStorage.clear();
+          navigate("/")
+          return toast({
+            title: "You are unauthorized",
+            description: "Failed to Load the chats",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom-left",
+          });
+        }
       }
     };
     (async () => await fetchChats())();

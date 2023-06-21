@@ -5,6 +5,7 @@ const asyncHandler = require('express-async-handler');
 const protect = asyncHandler(async(req,res,next) =>{
     let token;
 
+    
     if(req.headers.authorization && req.headers.authorization.startsWith("Bearer ")){
         try {
             token = req.headers.authorization.split(" ")[1]
@@ -15,13 +16,13 @@ const protect = asyncHandler(async(req,res,next) =>{
             next();
 
         } catch (error) {
-            res.status().json({message:error.message})
+            res.status(401).json({message:error.message})
         }
     }
     if (!token) {
-        res.status(401);
-        throw new Error("Not authorized, no token");
+        return res.status(401).json({message:"You are not authorized."})
       }
+      console.log("🚀 ~ file: authMiddleware.js:26 ~ protect ~ token:", token)
 })
 
 

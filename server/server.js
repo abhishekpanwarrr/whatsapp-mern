@@ -7,6 +7,7 @@ const connectDb = require("./db");
 // Routes import
 const userRouter = require("./routes/user");
 const chatRouter = require("./routes/chat");
+const messageRouter = require("./routes/message");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 
@@ -19,6 +20,7 @@ const PORT = process.env.PORT || 4000;
 // Routes
 app.use("/api/user", userRouter)
 app.use("/api/chat",chatRouter)
+app.use("/api/message",messageRouter)
 
  
 // Error Handling middlewares

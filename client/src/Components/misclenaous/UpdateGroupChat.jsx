@@ -34,12 +34,46 @@ const UpdateGroupChat = ({ fetchAgain, setFetchAgain }) => {
   const [renameLoading, setRenameLoading] = useState(false);
   const toast = useToast();
 
-  const handleRemove = (user) => {
-    
+  const handleRemove = async (user1) => {
+    if (selectedChat.groupAdmin._id !== user._id && user1._id !== user._id) {
+      return toast({
+        title: "Only admins can remove",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+    try {
+      setLoading(true);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      };
+
+      const { data } = await axios.put(
+        "http://localhost:4000/api/chat/groupremove",
+        { chatId: selectedChat._id, userId: user1._id },
+        config
+      );
+
+      user1._id === user._id ? setSelectedChat() : setSelectedChat(data);
+      setFetchAgain(!fetchAgain);
+      setLoading(false);
+    } catch (error) {
+      return toast({
+        title: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
   };
 
-  const handleAddtoGroup = async (user) => {
-    if (selectedChat.users.find((u) => u._id === user._id)) {
+  const handleAddtoGroup = async (user1) => {
+    if (selectedChat.users.find((u) => u._id === user1._id)) {
       return toast({
         title: "User alredy added",
         status: "error",
@@ -50,6 +84,7 @@ const UpdateGroupChat = ({ fetchAgain, setFetchAgain }) => {
     }
 
     if (selectedChat.groupAdmin._id !== user._id) {
+
       return toast({
         title: "Only admins can add",
         status: "error",
@@ -68,12 +103,12 @@ const UpdateGroupChat = ({ fetchAgain, setFetchAgain }) => {
 
       const { data } = await axios.put(
         "http://localhost:4000/api/chat/groupadd",
-        { chatId: selectedChat._id, userId: user._id },
+        { chatId: selectedChat._id, userId: user1._id },
         config
       );
-      setSelectedChat(data)
-      setFetchAgain(!fetchAgain)
-      setLoading(false )
+      setSelectedChat(data);
+      setFetchAgain(!fetchAgain);
+      setLoading(false);
     } catch (error) {
       toast({
         title: error.message,
